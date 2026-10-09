@@ -29,3 +29,12 @@ file.copy(occupation, file.path("inst","extdata","Occupations-dble-table.csv"), 
 # Gestion du fichier de données brutes "occupations"
 usethis::use_data_raw("occupations")
 usethis::use_data_raw("confiance")
+
+# Journal des modifications dans le package
+usethis::use_news_md()
+# Gestion des versions de développement du package
+usethis::use_version()
+usethis::use_dev_version()
+
+# Ajout des packages externes dans la documentation
+usethis::use_package("dplyr")
