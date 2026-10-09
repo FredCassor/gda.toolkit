@@ -1,0 +1,13 @@
+Package: gda.toolkit
+Title: Boîte à outils de l'Analyse Géométrique des Données
+Version: 0.0.0.9000
+Authors@R: 
+    person("Frédérik", "Cassor", , "frederik.cassor@sciencespo.fr", role = c("aut", "cre"),
+           comment = c(ORCID = "0000-0002-2627-3213"))
+Description: Ce paquet offre des fonctions et des méthodes pour mettre en
+    oeuvre une analyse géométrique des données en R.
+License: GPL (>= 3)
+Config/roxygen2/version: 8.1.0
+Encoding: UTF-8
+Language: fr
+Roxygen: list(markdown = TRUE)
