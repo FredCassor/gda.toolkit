@@ -7,9 +7,9 @@ Authors@R:
 Description: Ce paquet offre des fonctions et des méthodes pour mettre en
     oeuvre une analyse géométrique des données en R.
 License: GPL (>= 3)
+URL: https://github.com/FredCassor/gda.toolkit
+BugReports: https://github.com/FredCassor/gda.toolkit/issues
 Config/roxygen2/version: 8.1.0
 Encoding: UTF-8
 Language: fr
 Roxygen: list(markdown = TRUE)
-URL: https://github.com/FredCassor/gda.toolkit
-BugReports: https://github.com/FredCassor/gda.toolkit/issues
