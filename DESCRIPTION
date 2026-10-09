@@ -1,5 +1,5 @@
 Package: gda.toolkit
-Title: Boîte à outils de l'Analyse Géométrique des Données
+Title: Boîte à outils pour l'Analyse Géométrique des Données
 Version: 0.0.0.9001
 Authors@R: 
     person("Frédérik", "Cassor", , "frederik.cassor@sciencespo.fr", role = c("aut", "cre"),

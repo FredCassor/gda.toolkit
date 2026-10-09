@@ -37,4 +37,8 @@
 #' }
 #' @source
 #' * \url{https://www.sciencespo.fr/cevipof/fr/etudes-enquetes/barometre-confiance-politique/}
+#'
+#' @examples
+#' # summary
+#' summary(confiance)
 "confiance"
