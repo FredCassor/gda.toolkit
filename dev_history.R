@@ -8,7 +8,7 @@ usethis::use_gpl3_license()
 # Gestion de la langue du package
 desc::desc_set(Language = "fr")
 
-# Outils de développement de package ----
+# Outils de développement de package
 attachment::att_amend_desc()  # modification de la documentation
 devtools::check()             # check du package
 
@@ -21,6 +21,11 @@ devtools::build_readme()
 # Ajout de fonctions dans R/
 usethis::use_r("")
 
-# Gestion d'un fichier data dans data-raw/
+# Création du répertoire inst/extdata pour les fichiers externes (CSV,...)
 dir.create("inst/extdata", recursive = TRUE, showWarnings = FALSE)
-usethis::use_data_raw("ressources")
+# Copie d'un fichier plat CSV vers inst/extdata
+occupation <- file.path("~/Data/Metiers","Occupations-dble-table.csv")
+file.copy(occupation, file.path("inst","extdata","Occupations-dble-table.csv"), recursive = TRUE)
+# Gestion du fichier de données brutes "occupations"
+usethis::use_data_raw("occupations")
+usethis::use_data_raw("confiance")
