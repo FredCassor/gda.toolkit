@@ -11,3 +11,5 @@ Config/roxygen2/version: 8.1.0
 Encoding: UTF-8
 Language: fr
 Roxygen: list(markdown = TRUE)
+URL: https://github.com/FredCassor/gda.toolkit
+BugReports: https://github.com/FredCassor/gda.toolkit/issues
