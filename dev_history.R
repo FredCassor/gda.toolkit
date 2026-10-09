@@ -38,3 +38,6 @@ usethis::use_dev_version()
 
 # Ajout des packages externes dans la documentation
 usethis::use_package("dplyr")
+
+devtools::load_all()
+devtools::install()

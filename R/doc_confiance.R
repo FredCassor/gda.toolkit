@@ -35,6 +35,10 @@
 #'   \item{GensAutrNat }{Confiance dans les gens d'une autre nationalité}
 #'   \item{GensReligion }{Confiance dans les gens qui ont une opinion différente sur la religion}
 #' }
+#'
+#' @note
+#' Les questions de la confiance sont codées sur des échelles de Likert sur 4 points, de tout à fait confiance (1), plutôt confiance (2), plutôt pas confiance (3) à pas du tout confiance (4).
+#'
 #' @source
 #' * \url{https://www.sciencespo.fr/cevipof/fr/etudes-enquetes/barometre-confiance-politique/}
 #'
