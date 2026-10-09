@@ -47,6 +47,9 @@ confiance
 \description{
 Les données sont extraites des enquêtes initiées par le CEVIPOF (Centre de recherches politiques de Sciences-Po Paris) lancées en 2009 et répétées chaque année. Les données comprennent l'année de l'enquête et 26 questions de la confiance des Français dans les institutions, le personnel politique, dans les autres pour 8069 répondants.
 }
+\note{
+Les questions de la confiance sont codées sur des échelles de Likert sur 4 points, de tout à fait confiance (1), plutôt confiance (2), plutôt pas confiance (3) à pas du tout confiance (4).
+}
 \examples{
 # summary
 summary(confiance)
