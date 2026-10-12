@@ -1,0 +1,54 @@
+---
+title: "aa-exploration"
+author: "Frédérik Cassor"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{aa-exploration}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>",
+  echo = TRUE,
+  message = FALSE
+)
+```
+
+Cette vignette est une exploration des fonctionnalités du package `{gda.toolkit}` ainsi qu'une méthode de développement d'un package R.
+
+## Chargement des packages et de l'example de données
+
+On charge en mémoire les packages R utiles à l'analyse.
+
+```{r setup}
+# Liste de tous les packages nécessaires
+library(gda.toolkit)
+library(dplyr)
+```
+
+Les données de l'example sont extraites des 3 vagues d'enquête du Baromètre de la confiance, sur des échantillons de répondants français non panélisés, interrogés en 2017, puis en 2022 et en 2025. Les données ont été sauvegardées dans un fichier externe en format CSV dans ce projet.
+
+```{r example}
+# chargement de l'example dataset
+filename <- system.file("extdata/example.csv", package = "gda.toolkit")
+example <- read.csv2(filename)
+# structure du data.frame `example` et tri à plat des variables
+glimpse(example)
+tri <- lapply(1:ncol(example), function(x) table(example[,x], useNA = "ifany"))
+names(tri) <- colnames(example)
+tri
+```
+
+## Construction des 3 sous-tableaux pour chaque année
+
+- créer une function pour filtrer sur une année particulière.
+
+### Définition d'une fonction de filtre `filtre_par_annee`
+
+```{r filtre_annee}
+# Example pour 2017
+data2017 <- filtre_par_annee(example, 2017)
+```

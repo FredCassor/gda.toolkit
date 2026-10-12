@@ -28,28 +28,31 @@ La version en développement de gda.tool `{gda.toolkit}` peut s'installer depuis
 # install.packages("pak")
 pak::pak("FredCassor/gda.toolkit")
 ```
+Au cas où quelque chose ne va pas, vous pouvez installer les packages suivants avant en utilisant :
 
-## Example
+```{r dependances}
+a_installer <- c("dplyr")
+for (i in a_installer) {
+   if (!requireNamespace(i)) {
+      message(paste(" - installation de", i))
+      install.packages(i, dependencies = TRUE)
+   }
+}
+```
+
+## Comment utiliser les fonctions du package
 
 Voici un example de comment utiliser les fonctionnalités du package :
 
 ```{r example}
 library(gda.toolkit)
-## basic example code
+library(dplyr)
 ```
 
-On a un résumé du tableau de données de la confiance :
+On importe le tableau de données de l'exemple dans la session R :
 
 ```{r resume}
-summary(confiance)
+datapath <- system.file("extdata/example.csv", package = "gda.toolkit")
+example <- read.csv2(datapath)
+glimpse(example)
 ```
-
-You'll still need to render `README.Rmd` regularly, to keep `README.md` up-to-date. `devtools::build_readme()` is handy for this.
-
-You can also embed plots, for example:
-
-```{r pressure, eval=FALSE}
-plot(pressure)
-```
-
-In that case, don't forget to commit and push the resulting figure files, so they display on GitHub and CRAN.

@@ -20,85 +20,49 @@ depuis [GitHub](https://github.com/) avec :
 pak::pak("FredCassor/gda.toolkit")
 ```
 
-## Example
+Au cas où quelque chose ne va pas, vous pouvez installer les packages
+suivants avant en utilisant :
+
+``` r
+a_installer <- c("dplyr")
+for (i in a_installer) {
+   if (!requireNamespace(i)) {
+      message(paste(" - installation de", i))
+      install.packages(i, dependencies = TRUE)
+   }
+}
+#> Le chargement a nécessité le package : dplyr
+```
+
+## Comment utiliser les fonctions du package
 
 Voici un example de comment utiliser les fonctionnalités du package :
 
 ``` r
 library(gda.toolkit)
-## basic example code
-```
-
-On a un résumé du tableau de données de la confiance :
-
-``` r
-summary(confiance)
-#>      Annee        CMunicipal       CGeneral       CRegional    
-#>  Min.   :2017   Min.   :1.000   Min.   :1.000   Min.   :1.000  
-#>  1st Qu.:2022   1st Qu.:2.000   1st Qu.:2.000   1st Qu.:2.000  
-#>  Median :2022   Median :2.000   Median :2.000   Median :3.000  
-#>  Mean   :2022   Mean   :2.489   Mean   :2.612   Mean   :2.643  
-#>  3rd Qu.:2025   3rd Qu.:3.000   3rd Qu.:3.000   3rd Qu.:3.000  
-#>  Max.   :2025   Max.   :4.000   Max.   :4.000   Max.   :4.000  
-#>                                                                
-#>  AssembleeNationale     Senat        Gouvernement  InstitPresident
-#>  Min.   :1.000      Min.   :1.000   Min.   :1.00   Min.   :1.000  
-#>  1st Qu.:2.000      1st Qu.:2.000   1st Qu.:2.00   1st Qu.:2.000  
-#>  Median :3.000      Median :3.000   Median :3.00   Median :3.000  
-#>  Mean   :2.994      Mean   :2.923   Mean   :3.09   Mean   :3.021  
-#>  3rd Qu.:4.000      3rd Qu.:4.000   3rd Qu.:4.00   3rd Qu.:4.000  
-#>  Max.   :4.000      Max.   :4.000   Max.   :4.00   Max.   :4.000  
-#>                                                                   
-#>     PartiPol           UE           Hopitaux      SecuSociale   
-#>  Min.   :1.000   Min.   :1.000   Min.   :1.000   Min.   :1.000  
-#>  1st Qu.:3.000   1st Qu.:2.000   1st Qu.:2.000   1st Qu.:2.000  
-#>  Median :3.000   Median :3.000   Median :2.000   Median :2.000  
-#>  Mean   :3.226   Mean   :2.921   Mean   :2.067   Mean   :2.291  
-#>  3rd Qu.:4.000   3rd Qu.:4.000   3rd Qu.:2.000   3rd Qu.:3.000  
-#>  Max.   :4.000   Max.   :4.000   Max.   :4.000   Max.   :4.000  
-#>                  NA's   :51                                     
-#>      Ecole           Police         Justice          Armee      
-#>  Min.   :1.000   Min.   :1.000   Min.   :1.000   Min.   :1.000  
-#>  1st Qu.:2.000   1st Qu.:2.000   1st Qu.:2.000   1st Qu.:2.000  
-#>  Median :2.000   Median :2.000   Median :3.000   Median :2.000  
-#>  Mean   :2.272   Mean   :2.165   Mean   :2.678   Mean   :2.095  
-#>  3rd Qu.:3.000   3rd Qu.:3.000   3rd Qu.:3.000   3rd Qu.:2.000  
-#>  Max.   :4.000   Max.   :4.000   Max.   :4.000   Max.   :4.000  
-#>                                                                 
-#>    Syndicats      Associations       Medias         Banques    
-#>  Min.   :1.000   Min.   :1.000   Min.   :1.000   Min.   :1.00  
-#>  1st Qu.:2.000   1st Qu.:2.000   1st Qu.:2.000   1st Qu.:2.00  
-#>  Median :3.000   Median :2.000   Median :3.000   Median :3.00  
-#>  Mean   :2.875   Mean   :2.354   Mean   :2.968   Mean   :2.79  
-#>  3rd Qu.:4.000   3rd Qu.:3.000   3rd Qu.:4.000   3rd Qu.:3.00  
-#>  Max.   :4.000   Max.   :4.000   Max.   :4.000   Max.   :4.00  
-#>                                                                
-#>  GdesEntreprisesPub GdesEntreprisesPriv      PME          Voisins     
-#>  Min.   :1.000      Min.   :1.000       Min.   :1.00   Min.   :1.000  
-#>  1st Qu.:2.000      1st Qu.:2.000       1st Qu.:2.00   1st Qu.:2.000  
-#>  Median :2.000      Median :3.000       Median :2.00   Median :2.000  
-#>  Mean   :2.584      Mean   :2.643       Mean   :2.12   Mean   :2.139  
-#>  3rd Qu.:3.000      3rd Qu.:3.000       3rd Qu.:2.00   3rd Qu.:3.000  
-#>  Max.   :4.000      Max.   :4.000       Max.   :4.00   Max.   :4.000  
-#>                                                                       
-#>   Gens1erefois    GensAutrNat     GensReligion  
-#>  Min.   :1.000   Min.   :1.000   Min.   :1.000  
-#>  1st Qu.:2.000   1st Qu.:2.000   1st Qu.:2.000  
-#>  Median :3.000   Median :2.000   Median :2.000  
-#>  Mean   :2.676   Mean   :2.277   Mean   :2.243  
-#>  3rd Qu.:3.000   3rd Qu.:3.000   3rd Qu.:3.000  
-#>  Max.   :4.000   Max.   :4.000   Max.   :4.000  
+library(dplyr)
+#> Warning: le package 'dplyr' a été compilé avec la version R 4.5.3
 #> 
+#> Attachement du package : 'dplyr'
+#> Les objets suivants sont masqués depuis 'package:stats':
+#> 
+#>     filter, lag
+#> Les objets suivants sont masqués depuis 'package:base':
+#> 
+#>     intersect, setdiff, setequal, union
 ```
 
-You’ll still need to render `README.Rmd` regularly, to keep `README.md`
-up-to-date. `devtools::build_readme()` is handy for this.
-
-You can also embed plots, for example:
+On importe le tableau de données de l’exemple dans la session R :
 
 ``` r
-plot(pressure)
+datapath <- system.file("extdata/example.csv", package = "gda.toolkit")
+example <- read.csv2(datapath)
+glimpse(example)
+#> Rows: 43
+#> Columns: 5
+#> $ Annee           <int> 2017, 2017, 2017, 2017, 2017, 2017, 2017, 2017, 2017, …
+#> $ CMunicipal      <int> 3, 2, 3, 3, 2, 4, 2, 3, 2, 2, 2, 1, 4, 2, 2, 3, 2, 2, …
+#> $ Gouvernement    <int> 3, 2, 4, 2, 3, 4, 4, 3, 2, 3, 4, 3, 4, 4, 2, 2, 2, 2, …
+#> $ InstitPresident <int> 3, 2, 3, 3, 3, 2, 4, 2, 2, 3, 4, 2, 4, 4, 2, 3, 2, 2, …
+#> $ UE              <int> 3, 3, 3, 3, 3, 4, 4, 3, 2, 3, 4, 2, 4, 4, 2, 2, 2, 2, …
 ```
-
-In that case, don’t forget to commit and push the resulting figure
-files, so they display on GitHub and CRAN.
