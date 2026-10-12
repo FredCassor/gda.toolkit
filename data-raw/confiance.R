@@ -33,3 +33,11 @@ usethis::use_data(confiance, overwrite = TRUE)
 
 # Documentation des data
 checkhelper::fix_dataset_doc("confiance")
+
+# Construction d'un tableau d'example pour le développement et les tests
+a <- dplyr::slice_sample(df1, n = 10)
+b <- dplyr::slice_sample(df2, n = 15)
+c <- dplyr::slice_sample(df3, n = 18)
+example <- dplyr::bind_rows(list(a,b,c))
+example <- example[, c("Annee", "CMunicipal", "Gouvernement","InstitPresident", "UE")]
+readr::write_csv2(example, file = "inst/extdata/example.csv", na = "")

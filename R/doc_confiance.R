@@ -33,7 +33,7 @@
 #'   \item{Voisins }{Confiance dans vos voisins}
 #'   \item{Gens1erefois }{Confiance dans les gens qu'on rencontre pour la première fois}
 #'   \item{GensAutrNat }{Confiance dans les gens d'une autre nationalité}
-#'   \item{GensReligion }{Confiance dans les gens qui ont une opinion différente sur la religion}
+#'   \item{GensReligion }{Confiance dans les gens qui ont une opinion sur la religion différente}
 #' }
 #'
 #' @note

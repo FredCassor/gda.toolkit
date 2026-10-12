@@ -18,6 +18,8 @@ usethis::use_github(organisation = NULL)
 # Modification du README
 usethis::use_readme_rmd()
 devtools::build_readme()
+# Ajout d'une vignette
+usethis::use_vignette("aa-exploration")
 # Ajout de fonctions dans R/
 usethis::use_r("")
 

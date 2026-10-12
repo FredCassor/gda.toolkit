@@ -31,17 +31,17 @@ pak::pak("FredCassor/gda.toolkit")
 
 ## Example
 
-This is a basic example which shows you how to solve a common problem:
+Voici un example de comment utiliser les fonctionnalités du package :
 
-```{r example, eval=FALSE}
+```{r example}
 library(gda.toolkit)
 ## basic example code
 ```
 
-What is special about using `README.Rmd` instead of just `README.md`? You can include R chunks like so:
+On a un résumé du tableau de données de la confiance :
 
-```{r cars}
-summary(cars)
+```{r resume}
+summary(confiance)
 ```
 
 You'll still need to render `README.Rmd` regularly, to keep `README.md` up-to-date. `devtools::build_readme()` is handy for this.
