@@ -31,7 +31,6 @@ for (i in a_installer) {
       install.packages(i, dependencies = TRUE)
    }
 }
-#> Le chargement a nécessité le package : dplyr
 ```
 
 ## Comment utiliser les fonctions du package
@@ -42,14 +41,6 @@ Voici un example de comment utiliser les fonctionnalités du package :
 library(gda.toolkit)
 library(dplyr)
 #> Warning: le package 'dplyr' a été compilé avec la version R 4.5.3
-#> 
-#> Attachement du package : 'dplyr'
-#> Les objets suivants sont masqués depuis 'package:stats':
-#> 
-#>     filter, lag
-#> Les objets suivants sont masqués depuis 'package:base':
-#> 
-#>     intersect, setdiff, setequal, union
 ```
 
 On importe le tableau de données de l’exemple dans la session R :
