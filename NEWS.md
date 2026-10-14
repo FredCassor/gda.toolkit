@@ -9,3 +9,7 @@
 * Ajout de la fonction `filtre_par_annee()`, des tests unitaires correspondants.
 
 * Création d'une vignette d'exploration d'analyse pour s'initier au développement.
+
+## gda.toolkit 0.0.0.9002
+
+* Ajout de 2 fonctions `creer_parametres()` et `transform_double()`
