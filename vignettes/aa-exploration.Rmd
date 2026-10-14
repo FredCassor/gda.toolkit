@@ -13,7 +13,8 @@ knitr::opts_chunk$set(
   collapse = TRUE,
   comment = "#>",
   echo = TRUE,
-  message = FALSE
+  message = FALSE,
+  warning = FALSE
 )
 ```
 
@@ -37,7 +38,7 @@ filename <- system.file("extdata/example.csv", package = "gda.toolkit")
 example <- read.csv2(filename)
 # structure du data.frame `example` et tri à plat des variables
 glimpse(example)
-tri <- lapply(1:ncol(example), function(x) table(example[,x], useNA = "ifany"))
+tri <- apply(example, 2, table)
 names(tri) <- colnames(example)
 tri
 ```
@@ -46,9 +47,128 @@ tri
 
 - créer une function pour filtrer sur une année particulière.
 
-### Définition d'une fonction de filtre `filtre_par_annee`
-
-```{r filtre_annee}
-# Example pour 2017
-data2017 <- filtre_par_annee(example, 2017)
+```{r filter}
+# Example pour 2017 (individus actifs dans l'analyse)
+data.actif <- filtre_par_annee(example, 2017)
+data.actif <- select(data.actif, -Annee)
+# Tableaux pour les individus supplémentaires
+data.supp <- filtre_par_annee(example, 2022) %>% select(-Annee)
 ```
+
+
+## Construction du tableau des questions dédoublées
+
+### Définition des paramètres
+
+Comme les variables sont des variables ordinales, codées selon des échelles de Likert en 4 points, le tableau de données nécessitent d'être préparé avant l'analyse. On procède au recodage des variables ordinales par dédoublement des questions en 2 pôles, un pôle '+' et un pôle '-' pour chaque question.
+
+```{r creer-parametres}
+#' Création des paramètres d'un tableau à analyser
+#' 
+#' La fonction retourne une liste de paramètres d'un tableau de données
+#'
+#' @param x un \code{data.frame}
+#' @param poids_I un \code{vector} numérique
+#' @param Ilabels un \code{vector} string
+#' @param poids_Q un \code{vector} numérique
+#' @param Qlabels un \code{vector} string
+#' @param a_Q un \code{vector} numérique
+#' @param b_Q un \code{vector} numérique
+#'
+#' @returns une \code{list} avec les paramètres de `x` nécessaires pour l'analyse
+#' @export
+#' 
+#' @note
+#' `poids_I` et `Ilabels` sont des vecteurs de même longueur que `nrow(x)`. `poids_Q` et `Qlabels` sont des vecteurs de même longueur que `ncol(x)`. `a_Q` et `b_Q` sont des vecteurs de même longueur que `ncol(x)` et renvoie la valeur minimale et maximale respectivement pour une question ordinale.
+#'
+#' @examples
+#' library(readr)
+#' filename <- system.file("extdata/example.csv", package = "gda.toolkit")
+#' example <- read_csv2(filename, col_select = c(CMunicipal:UE))
+#' parametres <- creer_parametres(example)
+creer_parametres <- function(x, poids_I = NULL, Ilabels = NULL, poids_Q = NULL, Qlabels = NULL, a_Q = NULL, b_Q = NULL){
+   x <- as.data.frame(x)
+   cardI <- nrow(x)
+   cardQ <- ncol(x)
+   if (is.null(poids_I) || !is.vector(poids_I) || length(poids_I)!=cardI) {
+      n_I <- rep(1, cardI)
+   }
+   if (is.null(poids_Q) || !is.vector(poids_Q) || length(poids_Q)!=cardQ) {
+      m_Q <- as.numeric(rep(1, cardQ))
+      w_Q <- rep(m_Q, each=2)
+   }
+   if (is.null(Ilabels) || !is.vector(Ilabels) || length(Ilabels)!=cardI) {
+      I_labels = rownames(x)
+   }
+   if (is.null(Qlabels) || !is.vector(Qlabels) || length(Qlabels)!=cardQ) {
+      Q_labels = colnames(x)
+   }
+   labels_ <- setNames(Q_labels, Q_labels)
+   scale_labels <- lapply(labels_, function(q) c(paste0(q,"+"), paste0(q,"-")))
+   if (is.null(a_Q) || !is.vector(a_Q) || length(a_Q)!=cardQ) {
+      a_Q = apply(x, 2, min, na.rm = TRUE)
+   }
+   if (is.null(b_Q) || !is.vector(b_Q) || length(b_Q)!=cardQ) {
+      b_Q = apply(x, 2, max, na.rm = TRUE)
+   }
+   a_Q <- setNames(a_Q, Q_labels)
+   b_Q <- setNames(b_Q, Q_labels)
+   stopifnot("a_Q must be less than b_Q" = {is.vector(a_Q) & is.vector(b_Q) & all(a_Q < b_Q)})
+   params <- list(dimension = c(cardI, cardQ), n_I = n_I, m_Q = m_Q, w_Q = w_Q, labels = list(Individu = I_labels, Question = Q_labels), scale = scale_labels, min = a_Q, max = b_Q)
+   return(params)
+}
+# Création de la liste des paramètres du tableau
+liste_parametres <- creer_parametres(data.actif, a_Q = rep(1, ncol(data.actif)))
+liste_parametres
+```
+
+### Codage par dédoublement
+
+```{r}
+transform_double <- function(x, params, reverse = FALSE) {}
+```
+
+
+```{r doubling, eval=FALSE}
+transform_double <- function(x, tab_noms=NULL, row_names=NULL, inverse=FALSE, a_Q=NULL, b_Q=NULL){
+   x <- as.data.frame(x)
+   if (is.null(tab_noms)) tab_noms = scale_labels
+   if (is.null(row_names) || length(row_names)!=nrow(x))
+      row_names = row.names(x)
+   if (is.null(a_Q)) 
+      a_Q <- apply(x, 2, min, na.rm = TRUE)
+   else if (length(a_Q) != ncol(x))
+      stop("length of a_Q is not equal to the number of columns of x.")
+   if (is.null(b_Q)) 
+      b_Q <- apply(x, 2, max, na.rm = TRUE)
+   else if  (length(b_Q) != ncol(x))
+      stop("length of b_Q is not equal to the number of columns of x.")
+   e_Q = b_Q - a_Q
+   
+   if (inverse)
+   {
+      x_inv = lapply(1:ncol(x), function(q) b_Q[q] - x[, q] + 1)
+      x = as.data.frame(x_inv, row.names = row_names, col.names = colnames(x))
+   }
+   get.double <- function(q) {
+      col1 = (x[, q] - a_Q[q]) / e_Q[q] 
+      col2 = (b_Q[q] - x[, q]) / e_Q[q]
+      new_col <- cbind(col1, col2)
+      dimnames(new_col) <- list(row_names, tab_noms[[q]])
+      return(new_col)
+   }
+   res <- lapply(1:ncol(x), get.double)
+   res <- do.call(cbind, tab_final)
+   return(as.data.frame(res, check.names = FALSE))
+}
+# example sur les données
+
+```
+
+
+### Construction du nuage des individus dans l'espace
+
+```{r nuage}
+
+```
+

@@ -12,8 +12,8 @@ et une méthodologie d’Analyse Géométrique des Données en R.
 
 ## Installation
 
-La version en développement de gda.tool `{gda.toolkit}` peut s’installer
-depuis [GitHub](https://github.com/) avec :
+La version en développement de `{gda.toolkit}` peut s’installer depuis
+[GitHub](https://github.com/) avec :
 
 ``` r
 # install.packages("pak")

@@ -24,7 +24,7 @@ Le but du package `{gda.toolkit}` est de proposer un ensemble d'outils et une m�
 
 ## Installation
 
-La version en développement de gda.tool `{gda.toolkit}` peut s'installer depuis [GitHub](https://github.com/) avec :
+La version en développement de `{gda.toolkit}` peut s'installer depuis [GitHub](https://github.com/) avec :
 
 ``` r
 # install.packages("pak")
