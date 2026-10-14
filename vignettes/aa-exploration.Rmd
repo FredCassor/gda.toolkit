@@ -38,9 +38,7 @@ filename <- system.file("extdata/example.csv", package = "gda.toolkit")
 example <- read.csv2(filename)
 # structure du data.frame `example` et tri à plat des variables
 glimpse(example)
-tri <- apply(example, 2, table)
-names(tri) <- colnames(example)
-tri
+apply(example, 2, questionr::freq)
 ```
 
 ## Construction des 3 sous-tableaux pour chaque année

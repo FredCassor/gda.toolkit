@@ -38,5 +38,5 @@ checkhelper::fix_dataset_doc("confiance")
 a <- dplyr::slice_sample(df1, n = 10)
 b <- dplyr::slice_sample(df2, n = 15)
 example <- dplyr::bind_rows(list(a, b))
-example <- example[, c("Annee", "CMunicipal", "Gouvernement","InstitPresident", "UE")]
+example <- example[, c("Annee", "CMunicipal", "Gouvernement","InstitPresident", "Medias")]
 readr::write_csv2(example, file = "inst/extdata/example.csv", na = "")
