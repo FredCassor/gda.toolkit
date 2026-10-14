@@ -12,9 +12,12 @@ BugReports: https://github.com/FredCassor/gda.toolkit/issues
 Depends: 
     R (>= 3.5)
 Imports: 
-    dplyr
+    dplyr,
+    readr,
+    stats
 Suggests: 
     knitr,
+    questionr,
     rmarkdown,
     testthat (>= 3.0.0)
 VignetteBuilder: 

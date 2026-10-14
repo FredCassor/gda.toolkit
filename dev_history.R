@@ -30,6 +30,8 @@ usethis::use_vignette("aa-exploration")
 
 # Ajout de fonctions dans R/
 usethis::use_r("filtre-par-annee")
+usethis::use_r("creer_parametres")
+usethis::use_r("transform_double")
 
 # Création du répertoire inst/extdata pour les fichiers externes (CSV,...)
 dir.create("inst/extdata", recursive = TRUE, showWarnings = FALSE)
@@ -48,9 +50,14 @@ usethis::use_dev_version()
 
 # Ajout des packages externes dans la documentation
 usethis::use_package("dplyr")
+usethis::use_package("readr")
+usethis::use_package("questionr", type = "suggests")
+
 # Ajout des tests unitaires des fonctions R
 usethis::use_testthat()
 usethis::use_test("test_filtres")
+usethis::use_test("test_creer_parametres")
+
 devtools::test()
 # Chargement des fonctions R et data du package
 devtools::load_all()

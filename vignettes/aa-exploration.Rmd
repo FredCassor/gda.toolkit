@@ -30,7 +30,13 @@ library(gda.toolkit)
 library(dplyr)
 ```
 
-Les données de l'example sont extraites des 3 vagues d'enquête du Baromètre de la confiance, sur des échantillons de répondants français non panélisés, interrogés en 2017, puis en 2022 et en 2025. Les données ont été sauvegardées dans un fichier externe en format CSV dans ce projet.
+## Données et méthodes
+
+- Données
+
+Les données de l'example sont extraites des 3 vagues d'enquête du Baromètre de la confiance, sur des échantillons de répondants français non panélisés, interrogés en 2017, puis en 2022. Les données ont été sauvegardées dans un fichier externe en format CSV dans ce projet.
+
+Le tableau de l'example contient 25 lignes (les individus) et 5 colonnes (les variables), dont l'année de l'enquête (`Annee`), le niveau de confiance dans le conseil municipal (`CMunicipal`), le niveau de confiance dans le gouvernement actuel (`Gouvernement`), le niveau de confiance dans l'institution présidentielle (`InstitPresident`), et le niveau de confiance dans les médias (`Medias`), Toutes les variables (ou questions) de la confiance sont des variables ordonnées, codées sur des échelles de Likert, en 4 positions, de 'tout à fait confiance' (codée 1), 'plutôt confiance' (codée 2), 'plutôt pas confiance' (codée 3), et 'pas du tout confiance' (notée 4).
 
 ```{r example}
 # chargement de l'example dataset
@@ -41,7 +47,7 @@ glimpse(example)
 apply(example, 2, questionr::freq)
 ```
 
-## Construction des 3 sous-tableaux pour chaque année
+## Construction des 2 tableaux pour chaque année
 
 - créer une function pour filtrer sur une année particulière.
 
@@ -56,111 +62,24 @@ data.supp <- filtre_par_annee(example, 2022) %>% select(-Annee)
 
 ## Construction du tableau des questions dédoublées
 
-### Définition des paramètres
+- Définition des paramètres
 
-Comme les variables sont des variables ordinales, codées selon des échelles de Likert en 4 points, le tableau de données nécessitent d'être préparé avant l'analyse. On procède au recodage des variables ordinales par dédoublement des questions en 2 pôles, un pôle '+' et un pôle '-' pour chaque question.
+Comme les variables sont des variables ordonnées, on procède au recodage des variables par dédoublement des questions en 2 pôles, un pôle '+' et un pôle '-' pour chaque question.
 
 ```{r creer-parametres}
-#' Création des paramètres d'un tableau à analyser
-#' 
-#' La fonction retourne une liste de paramètres d'un tableau de données
-#'
-#' @param x un \code{data.frame}
-#' @param poids_I un \code{vector} numérique
-#' @param Ilabels un \code{vector} string
-#' @param poids_Q un \code{vector} numérique
-#' @param Qlabels un \code{vector} string
-#' @param a_Q un \code{vector} numérique
-#' @param b_Q un \code{vector} numérique
-#'
-#' @returns une \code{list} avec les paramètres de `x` nécessaires pour l'analyse
-#' @export
-#' 
-#' @note
-#' `poids_I` et `Ilabels` sont des vecteurs de même longueur que `nrow(x)`. `poids_Q` et `Qlabels` sont des vecteurs de même longueur que `ncol(x)`. `a_Q` et `b_Q` sont des vecteurs de même longueur que `ncol(x)` et renvoie la valeur minimale et maximale respectivement pour une question ordinale.
-#'
-#' @examples
-#' library(readr)
-#' filename <- system.file("extdata/example.csv", package = "gda.toolkit")
-#' example <- read_csv2(filename, col_select = c(CMunicipal:UE))
-#' parametres <- creer_parametres(example)
-creer_parametres <- function(x, poids_I = NULL, Ilabels = NULL, poids_Q = NULL, Qlabels = NULL, a_Q = NULL, b_Q = NULL){
-   x <- as.data.frame(x)
-   cardI <- nrow(x)
-   cardQ <- ncol(x)
-   if (is.null(poids_I) || !is.vector(poids_I) || length(poids_I)!=cardI) {
-      n_I <- rep(1, cardI)
-   }
-   if (is.null(poids_Q) || !is.vector(poids_Q) || length(poids_Q)!=cardQ) {
-      m_Q <- as.numeric(rep(1, cardQ))
-      w_Q <- rep(m_Q, each=2)
-   }
-   if (is.null(Ilabels) || !is.vector(Ilabels) || length(Ilabels)!=cardI) {
-      I_labels = rownames(x)
-   }
-   if (is.null(Qlabels) || !is.vector(Qlabels) || length(Qlabels)!=cardQ) {
-      Q_labels = colnames(x)
-   }
-   labels_ <- setNames(Q_labels, Q_labels)
-   scale_labels <- lapply(labels_, function(q) c(paste0(q,"+"), paste0(q,"-")))
-   if (is.null(a_Q) || !is.vector(a_Q) || length(a_Q)!=cardQ) {
-      a_Q = apply(x, 2, min, na.rm = TRUE)
-   }
-   if (is.null(b_Q) || !is.vector(b_Q) || length(b_Q)!=cardQ) {
-      b_Q = apply(x, 2, max, na.rm = TRUE)
-   }
-   a_Q <- setNames(a_Q, Q_labels)
-   b_Q <- setNames(b_Q, Q_labels)
-   stopifnot("a_Q must be less than b_Q" = {is.vector(a_Q) & is.vector(b_Q) & all(a_Q < b_Q)})
-   params <- list(dimension = c(cardI, cardQ), n_I = n_I, m_Q = m_Q, w_Q = w_Q, labels = list(Individu = I_labels, Question = Q_labels), scale = scale_labels, min = a_Q, max = b_Q)
-   return(params)
-}
 # Création de la liste des paramètres du tableau
 liste_parametres <- creer_parametres(data.actif, a_Q = rep(1, ncol(data.actif)))
 liste_parametres
 ```
 
-### Codage par dédoublement
+- Codage des variables par dédoublement
+
+La fonction `transform_double()` effectue une transformation sur le tableau de données, chaque question est recodée en 2 échelles bipolaires, notées '+' et '-'.
 
 ```{r}
-transform_double <- function(x, params, reverse = FALSE) {}
-```
-
-
-```{r doubling, eval=FALSE}
-transform_double <- function(x, tab_noms=NULL, row_names=NULL, inverse=FALSE, a_Q=NULL, b_Q=NULL){
-   x <- as.data.frame(x)
-   if (is.null(tab_noms)) tab_noms = scale_labels
-   if (is.null(row_names) || length(row_names)!=nrow(x))
-      row_names = row.names(x)
-   if (is.null(a_Q)) 
-      a_Q <- apply(x, 2, min, na.rm = TRUE)
-   else if (length(a_Q) != ncol(x))
-      stop("length of a_Q is not equal to the number of columns of x.")
-   if (is.null(b_Q)) 
-      b_Q <- apply(x, 2, max, na.rm = TRUE)
-   else if  (length(b_Q) != ncol(x))
-      stop("length of b_Q is not equal to the number of columns of x.")
-   e_Q = b_Q - a_Q
-   
-   if (inverse)
-   {
-      x_inv = lapply(1:ncol(x), function(q) b_Q[q] - x[, q] + 1)
-      x = as.data.frame(x_inv, row.names = row_names, col.names = colnames(x))
-   }
-   get.double <- function(q) {
-      col1 = (x[, q] - a_Q[q]) / e_Q[q] 
-      col2 = (b_Q[q] - x[, q]) / e_Q[q]
-      new_col <- cbind(col1, col2)
-      dimnames(new_col) <- list(row_names, tab_noms[[q]])
-      return(new_col)
-   }
-   res <- lapply(1:ncol(x), get.double)
-   res <- do.call(cbind, tab_final)
-   return(as.data.frame(res, check.names = FALSE))
-}
-# example sur les données
-
+parametres <- creer_parametres(data.actif, a_Q = rep(1, ncol(data.actif)))
+df <- transform_double(data.actif, params = parametres)
+df
 ```
 
 
