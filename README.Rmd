@@ -31,7 +31,7 @@ La version en développement de `{gda.toolkit}` peut s'installer depuis [GitHub]
 # install.packages("pak")
 pak::pak("FredCassor/gda.toolkit")
 ```
-Au cas où quelque chose ne va pas, vous pouvez installer les packages suivants avant en utilisant :
+Au cas où quelque chose ne va pas, vous pouvez installer les packages suivants avant :
 
 ```{r dependances}
 a_installer <- c("dplyr","readr")
@@ -54,11 +54,16 @@ library(dplyr)
 
 On importe le tableau de données de l'exemple dans la session R :
 
-```{r resume}
+```{r import}
 datapath <- system.file("extdata/example.csv", package = "gda.toolkit")
 example <- read.csv2(datapath)
 # Aperçu
 glimpse(example)
-# Tris à plat
+```
+
+Voici le tri à plat de l'ensemble des variables du jeu de données.
+
+```{r triaplat}
 apply(example, 2, table)
 ```
+

@@ -21,7 +21,7 @@ pak::pak("FredCassor/gda.toolkit")
 ```
 
 Au cas où quelque chose ne va pas, vous pouvez installer les packages
-suivants avant en utilisant :
+suivants avant :
 
 ``` r
 a_installer <- c("dplyr","readr")
@@ -56,7 +56,11 @@ glimpse(example)
 #> $ Gouvernement    <int> 2, 2, 4, 3, 3, 3, 3, 4, 3, 3, 1, 3, 3, 4, 3, 3, 4, 4, …
 #> $ InstitPresident <int> 2, 2, 4, 2, 3, 3, 2, 3, 3, 3, 1, 2, 3, 3, 3, 3, 4, 4, …
 #> $ Medias          <int> 4, 2, 4, 4, 3, 4, 3, 3, 2, 3, 1, 2, 3, 3, 4, 1, 4, 4, …
-# Tris à plat
+```
+
+Voici le tri à plat de l’ensemble des variables du jeu de données.
+
+``` r
 apply(example, 2, table)
 #> $Annee
 #> 
