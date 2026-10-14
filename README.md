@@ -24,7 +24,7 @@ Au cas où quelque chose ne va pas, vous pouvez installer les packages
 suivants avant en utilisant :
 
 ``` r
-a_installer <- c("dplyr")
+a_installer <- c("dplyr","readr")
 for (i in a_installer) {
    if (!requireNamespace(i)) {
       message(paste(" - installation de", i))
@@ -40,7 +40,6 @@ Voici un example de comment utiliser les fonctionnalités du package :
 ``` r
 library(gda.toolkit)
 library(dplyr)
-#> Warning: le package 'dplyr' a été compilé avec la version R 4.5.3
 ```
 
 On importe le tableau de données de l’exemple dans la session R :
@@ -48,12 +47,39 @@ On importe le tableau de données de l’exemple dans la session R :
 ``` r
 datapath <- system.file("extdata/example.csv", package = "gda.toolkit")
 example <- read.csv2(datapath)
+# Aperçu
 glimpse(example)
-#> Rows: 43
+#> Rows: 25
 #> Columns: 5
 #> $ Annee           <int> 2017, 2017, 2017, 2017, 2017, 2017, 2017, 2017, 2017, …
-#> $ CMunicipal      <int> 3, 2, 3, 3, 2, 4, 2, 3, 2, 2, 2, 1, 4, 2, 2, 3, 2, 2, …
-#> $ Gouvernement    <int> 3, 2, 4, 2, 3, 4, 4, 3, 2, 3, 4, 3, 4, 4, 2, 2, 2, 2, …
-#> $ InstitPresident <int> 3, 2, 3, 3, 3, 2, 4, 2, 2, 3, 4, 2, 4, 4, 2, 3, 2, 2, …
-#> $ UE              <int> 3, 3, 3, 3, 3, 4, 4, 3, 2, 3, 4, 2, 4, 4, 2, 2, 2, 2, …
+#> $ CMunicipal      <int> 2, 2, 4, 4, 3, 3, 1, 3, 2, 3, 1, 2, 2, 3, 3, 2, 2, 3, …
+#> $ Gouvernement    <int> 2, 2, 4, 3, 3, 3, 3, 4, 3, 3, 1, 3, 3, 4, 3, 3, 4, 4, …
+#> $ InstitPresident <int> 2, 2, 4, 2, 3, 3, 2, 3, 3, 3, 1, 2, 3, 3, 3, 3, 4, 4, …
+#> $ Medias          <int> 4, 2, 4, 4, 3, 4, 3, 3, 2, 3, 1, 2, 3, 3, 4, 1, 4, 4, …
+# Tris à plat
+apply(example, 2, table)
+#> $Annee
+#> 
+#> 2017 2022 
+#>   10   15 
+#> 
+#> $CMunicipal
+#> 
+#>  1  2  3  4 
+#>  2 12  8  3 
+#> 
+#> $Gouvernement
+#> 
+#>  1  2  3  4 
+#>  2  4 10  9 
+#> 
+#> $InstitPresident
+#> 
+#> 1 2 3 4 
+#> 2 7 9 7 
+#> 
+#> $Medias
+#> 
+#> 1 2 3 4 
+#> 3 6 7 9
 ```
