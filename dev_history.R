@@ -65,4 +65,9 @@ devtools::load_all()
 devtools::install()
 
 # Publier le package en ligne
-pkgdown::build_site()
+pkgdown::build_site
+
+# Ajout d'un badge dans README.Rmd du cycle de vie du package
+usethis::use_lifecycle_badge("experimental")   # "experimental", "stable", "superseded", "deprecated"
+# Ajout d'un badge dans README.Rmd du statut du R CMD Check
+usethis::use_github_action("check-release")

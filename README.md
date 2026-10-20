@@ -5,10 +5,12 @@
 
 <!-- badges: start -->
 
+[![Lifecycle:
+experimental](https://img.shields.io/badge/lifecycle-experimental-orange.svg)](https://lifecycle.r-lib.org/articles/stages.html#experimental)
 <!-- badges: end -->
 
-Le but du package `{gda.toolkit}` est de proposer un ensemble d’outils
-et une méthodologie d’Analyse Géométrique des Données en R.
+Le but du package `{gda.toolkit}` est de fournir un ensemble d’outils et
+une méthodologie d’Analyse Géométrique des Données en R.
 
 ## Installation
 
@@ -33,7 +35,7 @@ for (i in a_installer) {
 }
 ```
 
-## Comment utiliser les fonctions du package
+## Utilisation
 
 Voici un example de comment utiliser les fonctionnalités du package :
 

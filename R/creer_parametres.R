@@ -53,6 +53,10 @@ creer_parametres <- function(x, poids_I = NULL, Ilabels = NULL, poids_Q = NULL, 
       stop("the length of *b_Q* must be equal the number of columns of *x*")
    b_Q <- setNames(b_Q, Q_labels)
    stopifnot("*a_Q* must be less than *b_Q* for any question" = {is.vector(a_Q) & is.vector(b_Q) & all(a_Q < b_Q)})
-   params <- list(dimension = c(cardI, cardQ), n_I = n_I, m_Q = m_Q, w_Q = w_Q, labels = list(Individu = I_labels, Question = Q_labels), scale = scale_labels, min = a_Q, max = b_Q)
+   params <- list(Dimension = c(cardI, cardQ),
+                  n_I = n_I, m_Q = m_Q, w_Q = w_Q,
+                  Labels = list(Individu = I_labels, Variable = Q_labels),
+                  Scale = scale_labels,
+                  a_Q = a_Q, b_Q = b_Q)
    return(params)
 }

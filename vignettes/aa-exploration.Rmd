@@ -1,6 +1,7 @@
 ---
 title: "aa-exploration"
 author: "Frédérik Cassor"
+date: "`r format(Sys.Date(), '%d %B %Y')`"
 output: rmarkdown::html_vignette
 vignette: >
   %\VignetteIndexEntry{aa-exploration}
@@ -36,7 +37,7 @@ library(dplyr)
 
 Les données de l'example sont extraites des 3 vagues d'enquête du Baromètre de la confiance, sur des échantillons de répondants français non panélisés, interrogés en 2017, puis en 2022. Les données ont été sauvegardées dans un fichier externe en format CSV dans ce projet.
 
-Le tableau de l'example contient 25 lignes (les individus) et 5 colonnes (les variables), dont l'année de l'enquête (`Annee`), le niveau de confiance dans le conseil municipal (`CMunicipal`), le niveau de confiance dans le gouvernement actuel (`Gouvernement`), le niveau de confiance dans l'institution présidentielle (`InstitPresident`), et le niveau de confiance dans les médias (`Medias`), Toutes les variables (ou questions) de la confiance sont des variables ordonnées, codées sur des échelles de Likert, en 4 positions, de 'tout à fait confiance' (codée 1), 'plutôt confiance' (codée 2), 'plutôt pas confiance' (codée 3), et 'pas du tout confiance' (notée 4).
+Le tableau de l'example contient 25 lignes (les individus) et 5 colonnes (les variables), dont l'année de l'enquête (`Annee`), le niveau de confiance dans le conseil municipal (`CMunicipal`), le niveau de confiance dans le gouvernement actuel (`Gouvernement`), le niveau de confiance dans l'institution présidentielle (`InstitPresident`), et le niveau de confiance dans les médias (`Medias`), Toutes les variables (ou questions) de la confiance sont des variables ordonnées, codées sur des échelles de Likert, en 4 positions, de 'tout à fait confiance' (codée 1), 'plutôt confiance' (codée 2), 'plutôt pas confiance' (codée 3), à 'pas du tout confiance' (notée 4).
 
 ```{r example}
 # chargement de l'example dataset
@@ -60,7 +61,7 @@ data.supp <- filtre_par_annee(example, 2022) %>% select(-Annee)
 ```
 
 
-## Construction du tableau des questions dédoublées
+## Construction du tableau avant l'analyse
 
 - Définition des paramètres
 
@@ -68,22 +69,101 @@ Comme les variables sont des variables ordonnées, on procède au recodage des v
 
 ```{r creer-parametres}
 # Création de la liste des paramètres du tableau
-liste_parametres <- creer_parametres(data.actif, a_Q = rep(1, ncol(data.actif)))
-liste_parametres
+parametres <- creer_parametres(data.actif, a_Q = rep(1, ncol(data.actif)))
+parametres
 ```
 
-- Codage des variables par dédoublement
+- Codage par dédoublement des variables
 
 La fonction `transform_double()` effectue une transformation sur le tableau de données, chaque question est recodée en 2 échelles bipolaires, notées '+' et '-'.
 
 ```{r}
-parametres <- creer_parametres(data.actif, a_Q = rep(1, ncol(data.actif)))
-df <- transform_double(data.actif, params = parametres)
-df
+df_double <- creer_double(data.actif, params = parametres, reverse = TRUE)
+class(df_double)
+head(df_double)
 ```
 
+- Pondération des variables actives
 
-### Construction du nuage des individus dans l'espace
+```{r test_poids}
+#' Fonction utilitaire: vérification de la pondération
+#'
+#' @param card integer
+#' @param poids un vecteur numérique
+#'
+#' @returns un vecteur numérique
+#' @export
+test_poids <- function(card, poids = NULL) {
+   stopifnot("*'card'* must be an integer" = inherits(card, "integer"))
+   if (is.null(poids)) 
+      return(rep(1, card))
+   poids <- as.vector(poids)
+   if (length(poids) != card) stop("La longueur de 'poids' (",length(poids),") est différente de la valeur attendue (", card,").")
+   #if (any(is.na(poids))) warning("Les poids avec *NA* sont remplacés par un poids nul.")
+   #poids[is.na(poids)] <- 0
+   if (any(poids<0)) stop("Tous les poids doivent être strictement positive.")
+   return(poids)
+}
+cardQ <- dim(data.actif)[2]
+m_Q <- c(1,1,2,2)
+m_Q <- test_poids(cardQ, m_Q)
+m_Q
+```
+
+```{r poids_question}
+ponderer <- function(x, p = NULL)
+{
+  mat <- as.matrix(x)
+  cardQ <- dim(x)[2]
+  if (inherits(x, "data.frame")) {
+     row_names <- row.names(x)
+     col_names <- colnames(x)
+  }
+  else {
+     row_names <- seq(1, nrow(x))
+     col_names <- paste0("V", 1:ncol(x))
+  }
+  p <- test_poids(cardQ, p)
+  y <- mat %*% diag(p)
+  dimnames(y) <- list(row_names, col_names)
+  if (inherits(x, "data.frame")) {
+     y <- data.frame(y, row.names = row_names, check.names = FALSE)
+     return(y)
+  }
+  else
+     return(y)
+}
+# poids des pôles des questions w_Q
+w_Q <- rep(m_Q, each = 2)
+mat <- as.matrix(df_double)
+df_double <- ponderer(df_double, w_Q)
+class(df_double)
+head(df_double)
+```
+- Tableau de données des variables recodées pour l'ACP pondérée
+
+```{r data-pca}
+# Fonction de création d'une table de données pour l'ACP pondérée
+Data.PCA <- function(x, params, reverse = FALSE) {
+   x <- as.data.frame(x)
+   row_names <- rownames(x)
+   col_names <- colnames(x)
+   a_Q = get("a_Q", params)
+   b_Q = get("b_Q", params)
+   e_Q <- b_Q - a_Q
+   if (reverse) {
+      U_IQ = lapply(1:ncol(x), function(q) (b_Q[q] - x[, q])/e_Q[q])
+   } else {
+      U_IQ = lapply(1:ncol(x), function(q) (x[, q] - a_Q[q])/e_Q[q])
+   }
+   U_IQ = as.data.frame(U_IQ, row.names = row_names, col.names=paste0(col_names, "_01"), check.names=FALSE)
+   return(U_IQ)
+}
+temp = Data.PCA(data.actif, params = parametres, reverse = TRUE)
+head(temp)
+```
+
+## Construction du nuage des individus dans l'espace
 
 ```{r nuage}
 
