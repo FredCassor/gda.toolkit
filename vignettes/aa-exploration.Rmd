@@ -68,8 +68,12 @@ data.supp <- filtre_par_annee(example, 2022) %>% select(-Annee)
 Comme les variables sont des variables ordonnées, on procède au recodage des variables par dédoublement des questions en 2 pôles, un pôle '+' et un pôle '-' pour chaque question.
 
 ```{r creer-parametres}
+# choix des bornes des échelles 
+a_Q = rep(1, ncol(data.actif))
+b_Q = rep(4, ncol(data.actif))
+
 # Création de la liste des paramètres du tableau
-parametres <- creer_parametres(data.actif, a_Q = rep(1, ncol(data.actif)))
+parametres <- creer_parametres(data.actif, a_Q = a_Q, b_Q = b_Q)
 parametres
 ```
 
@@ -78,66 +82,19 @@ parametres
 La fonction `transform_double()` effectue une transformation sur le tableau de données, chaque question est recodée en 2 échelles bipolaires, notées '+' et '-'.
 
 ```{r}
-df_double <- creer_double(data.actif, params = parametres, reverse = TRUE)
-class(df_double)
+df_double <- creer_double(data.actif, params = parametres, a_Q = a_Q, b_Q = b_Q, reverse = TRUE)
+head(data.actif)
 head(df_double)
 ```
 
 - Pondération des variables actives
 
-```{r test_poids}
-#' Fonction utilitaire: vérification de la pondération
-#'
-#' @param card integer
-#' @param poids un vecteur numérique
-#'
-#' @returns un vecteur numérique
-#' @export
-test_poids <- function(card, poids = NULL) {
-   stopifnot("*'card'* must be an integer" = inherits(card, "integer"))
-   if (is.null(poids)) 
-      return(rep(1, card))
-   poids <- as.vector(poids)
-   if (length(poids) != card) stop("La longueur de 'poids' (",length(poids),") est différente de la valeur attendue (", card,").")
-   #if (any(is.na(poids))) warning("Les poids avec *NA* sont remplacés par un poids nul.")
-   #poids[is.na(poids)] <- 0
-   if (any(poids<0)) stop("Tous les poids doivent être strictement positive.")
-   return(poids)
-}
-cardQ <- dim(data.actif)[2]
-m_Q <- c(1,1,2,2)
-m_Q <- test_poids(cardQ, m_Q)
-m_Q
-```
-
 ```{r poids_question}
-ponderer <- function(x, p = NULL)
-{
-  mat <- as.matrix(x)
-  cardQ <- dim(x)[2]
-  if (inherits(x, "data.frame")) {
-     row_names <- row.names(x)
-     col_names <- colnames(x)
-  }
-  else {
-     row_names <- seq(1, nrow(x))
-     col_names <- paste0("V", 1:ncol(x))
-  }
-  p <- test_poids(cardQ, p)
-  y <- mat %*% diag(p)
-  dimnames(y) <- list(row_names, col_names)
-  if (inherits(x, "data.frame")) {
-     y <- data.frame(y, row.names = row_names, check.names = FALSE)
-     return(y)
-  }
-  else
-     return(y)
-}
-# poids des pôles des questions w_Q
+# poids m_Q des questions
+m_Q <- c(1,1,2,2)
+# poids w_Q des 2 pôles des questions
 w_Q <- rep(m_Q, each = 2)
-mat <- as.matrix(df_double)
 df_double <- ponderer(df_double, w_Q)
-class(df_double)
 head(df_double)
 ```
 - Tableau de données des variables recodées pour l'ACP pondérée
@@ -159,8 +116,8 @@ Data.PCA <- function(x, params, reverse = FALSE) {
    U_IQ = as.data.frame(U_IQ, row.names = row_names, col.names=paste0(col_names, "_01"), check.names=FALSE)
    return(U_IQ)
 }
-temp = Data.PCA(data.actif, params = parametres, reverse = TRUE)
-head(temp)
+#temp = Data.PCA(data.actif, params = parametres, reverse = TRUE)
+#head(temp)
 ```
 
 ## Construction du nuage des individus dans l'espace

@@ -3,6 +3,8 @@
 export(creer_double)
 export(creer_parametres)
 export(filtre_par_annee)
+export(ponderer)
+import(utils)
 importFrom(dplyr,filter)
 importFrom(readr,read_csv2)
 importFrom(stats,setNames)

@@ -14,7 +14,8 @@ Depends:
 Imports: 
     dplyr,
     readr,
-    stats
+    stats,
+    utils
 Suggests: 
     knitr,
     questionr,

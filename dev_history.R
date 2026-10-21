@@ -29,9 +29,12 @@ usethis::use_r("globals")
 usethis::use_vignette("aa-exploration")
 
 # Ajout de fonctions dans R/
+usethis::use_r("utils")
 usethis::use_r("filtre-par-annee")
-usethis::use_r("creer_parametres")
-usethis::use_r("transform_double")
+usethis::use_r("creer-parametres")
+usethis::use_r("creer-double")
+usethis::use_r("ponderer")
+usethis::use_r("scaler")
 
 # Création du répertoire inst/extdata pour les fichiers externes (CSV,...)
 dir.create("inst/extdata", recursive = TRUE, showWarnings = FALSE)
@@ -55,8 +58,8 @@ usethis::use_package("questionr", type = "suggests")
 
 # Ajout des tests unitaires des fonctions R
 usethis::use_testthat()
-usethis::use_test("test_filtres")
-usethis::use_test("test_creer_parametres")
+usethis::use_test("test-filtres")
+usethis::use_test("test-creer-parametres")
 
 devtools::test()
 # Chargement des fonctions R et data du package
