@@ -6,10 +6,9 @@
 #' @param params une \code{list} de paramètres
 #' @param a_Q un \code{vector} numérique
 #' @param b_Q un \code{vector} numérique
-#' @param reverse Logical. Le codage des données devrait-il être inversé ?
+#' @param inverse Logical. Le codage des données devrait-il être inversé ?
 #'
 #' @returns un \code{data.frame} avec les colonnes dédoublées
-#' @importFrom readr read_csv2
 #' @importFrom stats setNames
 #' @import utils
 #'
@@ -32,10 +31,12 @@
 #' parametres <- creer_parametres(example, a_Q = a_Q, b_Q = b_Q)
 #' df <- creer_double(example, params = parametres, a_Q = a_Q, b_Q = b_Q)
 #' head(df)
-creer_double <- function(x, params, a_Q = NULL, b_Q = NULL, reverse = FALSE) {
+creer_double <- function(x, params, a_Q = NULL, b_Q = NULL, inverse = FALSE) {
    x <- as.data.frame(x)
    cardI <- nrow(x)
    cardQ <- ncol(x)
+   stopifnot("'params' must be a list" = inherits(params, "list"))
+   stopifnot("No item named 'Labels' found in 'params' list" = "Labels" %in% names(params))
    I_labels <- get("Individus", params[["Labels"]])
    I_labels <- if(length(I_labels)==0 || length(I_labels)!=cardI) rownames(x) else I_labels
    Q_labels <- get("Variables", params[["Labels"]])
@@ -52,7 +53,7 @@ creer_double <- function(x, params, a_Q = NULL, b_Q = NULL, reverse = FALSE) {
    b_Q <- setNames(b_Q, Q_labels)
       e_Q <- b_Q - a_Q
    m <- t(as.matrix(x))
-   if (reverse) {
+   if (inverse) {
       #x_inv <- lapply(1:ncol(x), function(q) b_Q[q] - x[, q] + 1)
       m_inv <- t(b_Q - m + 1)
       x <- as.data.frame(m_inv, row.names = I_labels, col.names = Q_labels)

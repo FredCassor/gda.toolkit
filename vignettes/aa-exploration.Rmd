@@ -82,7 +82,7 @@ parametres
 La fonction `transform_double()` effectue une transformation sur le tableau de données, chaque question est recodée en 2 échelles bipolaires, notées '+' et '-'.
 
 ```{r}
-df_double <- creer_double(data.actif, params = parametres, a_Q = a_Q, b_Q = b_Q, reverse = TRUE)
+df_double <- creer_double(data.actif, params = parametres, a_Q = a_Q, b_Q = b_Q, inverse = TRUE)
 head(data.actif)
 head(df_double)
 ```
@@ -99,30 +99,37 @@ head(df_double)
 ```
 - Tableau de données des variables recodées pour l'ACP pondérée
 
-```{r data-pca}
-# Fonction de création d'une table de données pour l'ACP pondérée
-Data.PCA <- function(x, params, reverse = FALSE) {
-   x <- as.data.frame(x)
-   row_names <- rownames(x)
-   col_names <- colnames(x)
-   a_Q = get("a_Q", params)
-   b_Q = get("b_Q", params)
-   e_Q <- b_Q - a_Q
-   if (reverse) {
-      U_IQ = lapply(1:ncol(x), function(q) (b_Q[q] - x[, q])/e_Q[q])
-   } else {
-      U_IQ = lapply(1:ncol(x), function(q) (x[, q] - a_Q[q])/e_Q[q])
-   }
-   U_IQ = as.data.frame(U_IQ, row.names = row_names, col.names=paste0(col_names, "_01"), check.names=FALSE)
-   return(U_IQ)
-}
-#temp = Data.PCA(data.actif, params = parametres, reverse = TRUE)
-#head(temp)
+```{r data_bsa}
+df_bsa = scaler_bsa(data.actif, a_Q, b_Q, params = parametres, inverse = TRUE)
+head(df_bsa)
+U_IQ <- as.matrix(df_bsa)
+head(U_IQ)
 ```
 
-## Construction du nuage des individus dans l'espace
+- Statistiques descriptives sur le tableau U_IQ
+
+```{r stat_u}
+stats <- stat_bsa(U_IQ, parametres$n_I, parametres$m_Q)
+stats
+```
+```{r}
+vcloud = sum(stats$omega_Q * stats$var_Q)
+vcloud
+```
+
+
+## Construction du nuage des individus via une ACP
 
 ```{r nuage}
+library(FactoMineR)
+res.pca <- PCA(df_bsa, scale.unit = FALSE, row.w = parametres$n_I, col.w = stats$omega_Q, graph = FALSE)
+summary(res.pca)
+```
 
+## Construction du nuage des individus via une AC du tableau dédoublé
+
+```{r ac-dedouble}
+res.ca <- CA(df_double, graph = FALSE)
+summary(res.ca)
 ```
 

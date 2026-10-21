@@ -4,7 +4,7 @@
 \alias{creer_double}
 \title{Transformation d'un tableau par dédoublement des colonnes}
 \usage{
-creer_double(x, params, a_Q = NULL, b_Q = NULL, reverse = FALSE)
+creer_double(x, params, a_Q = NULL, b_Q = NULL, inverse = FALSE)
 }
 \arguments{
 \item{x}{un \code{data.frame}}
@@ -15,7 +15,7 @@ creer_double(x, params, a_Q = NULL, b_Q = NULL, reverse = FALSE)
 
 \item{b_Q}{un \code{vector} numérique}
 
-\item{reverse}{Logical. Le codage des données devrait-il être inversé ?}
+\item{inverse}{Logical. Le codage des données devrait-il être inversé ?}
 }
 \value{
 un \code{data.frame} avec les colonnes dédoublées
