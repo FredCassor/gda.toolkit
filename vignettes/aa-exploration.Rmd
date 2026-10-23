@@ -73,7 +73,7 @@ a_Q = rep(1, ncol(data.actif))
 b_Q = rep(4, ncol(data.actif))
 
 # Création de la liste des paramètres du tableau
-parametres <- creer_parametres(data.actif, a_Q = a_Q, b_Q = b_Q)
+parametres <- creer_parametres(data.actif, a_Q, b_Q)
 parametres
 ```
 
@@ -83,53 +83,161 @@ La fonction `transform_double()` effectue une transformation sur le tableau de d
 
 ```{r}
 df_double <- creer_double(data.actif, params = parametres, a_Q = a_Q, b_Q = b_Q, inverse = TRUE)
-head(data.actif)
-head(df_double)
+print(data.actif)
+print(df_double, digits = 3)
 ```
 
 - Pondération des variables actives
 
 ```{r poids_question}
 # poids m_Q des questions
-m_Q <- c(1,1,2,2)
+m_Q <- c(2,2,1,1)
 # poids w_Q des 2 pôles des questions
 w_Q <- rep(m_Q, each = 2)
 df_double <- ponderer(df_double, w_Q)
-head(df_double)
+print(df_double, digits= 3)
 ```
 - Tableau de données des variables recodées pour l'ACP pondérée
 
 ```{r data_bsa}
 df_bsa = scaler_bsa(data.actif, a_Q, b_Q, params = parametres, inverse = TRUE)
-head(df_bsa)
+print(df_bsa, digits = 3)
 U_IQ <- as.matrix(df_bsa)
-head(U_IQ)
+print(U_IQ, digits = 3)
 ```
 
 - Statistiques descriptives sur le tableau U_IQ
 
 ```{r stat_u}
 stats <- stat_bsa(U_IQ, parametres$n_I, parametres$m_Q)
-stats
+# Bug sur le calcul de omega_Q à corriger !
+#stats$omega_Q = m_Q/stats$h_Q/sum(m_Q)
+#stats$contrib_Q = 100*(stats$omega_Q*stats$var_Q)/sum(stats$omega_Q*stats$var_Q)
+print(stats, digits = 4)
 ```
+- Variance totale
+
 ```{r}
 vcloud = sum(stats$omega_Q * stats$var_Q)
 vcloud
 ```
 
 
-## Construction du nuage des individus via une ACP
+## Construction du nuage des individus actifs via une ACP
+
+- Affichage des résultats
 
 ```{r nuage}
 library(FactoMineR)
 res.pca <- PCA(df_bsa, scale.unit = FALSE, row.w = parametres$n_I, col.w = stats$omega_Q, graph = FALSE)
 summary(res.pca)
 ```
+- Variance du nuage (ACP)
 
-## Construction du nuage des individus via une AC du tableau dédoublé
+```{r}
+sum(res.pca$eig[, "eigenvalue"])
+```
+
+
+
+- Visualisation graphique de l'ACP
+
+```{r graph-acp}
+library(factoextra)
+# nuage des individus
+fviz_pca_ind(res.pca, col.ind = "#00AFBB", repel = TRUE)
+# nuage des variables (échelle des axes à revoir)
+fviz_pca_var(res.pca, col.var = "steelblue")
+# biplot (nuages des individus et des variables)
+fviz_pca_biplot(res.pca, repel = TRUE)
+```
+
+
+## Construction du nuage des individus actifs via une AC du tableau dédoublé
 
 ```{r ac-dedouble}
 res.ca <- CA(df_double, graph = FALSE)
 summary(res.ca)
+```
+- Variance du nuage (AC)
+
+```{r}
+sum(res.ca$eig[,"eigenvalue"])
+```
+
+- Visualisation graphique des variables bipolaires dans le plan 1-2
+
+```{r}
+fviz_ca_col(res.ca, col.col = "coral", repel = TRUE)
+```
+
+- Visualisation graphique des individus dans le plan 1-2
+
+```{r}
+fviz_ca_row(res.ca, col.row = "steelblue", repel = TRUE)
+```
+
+## Projection des individus supplémentaires dans l'espace des individus actifs
+
+```{r}
+# selection des variables actives
+df.example <- select(example, -Annee)
+# choix des paramètres
+parametres <- creer_parametres(df.example, poids_I=c(rep(1,10), rep(0,15)), poids_Q = c(1,1,2,2))
+parametres
+# codage par dédoublement des variables actives
+a_Q = rep(1, ncol(df.example))
+b_Q = rep(4, ncol(df.example))
+df.acdedouble <- creer_double(df.example, a_Q, b_Q, params = parametres)
+# choix d'un pondération
+m_Q = c(1,1,2,2)
+w_2Q = rep(m_Q, each = 2)
+# application d'une pondération aux variables actives
+df.acdedouble <- ponderer(df.acdedouble, w_2Q)
+# affichage des 6 premiers cas
+head(df.acdedouble)
+```
+
+```{r}
+# construction du tableau U_IQ
+U_IQ = scaler_bsa(df.example, a_Q, b_Q, params = parametres, inverse = TRUE)
+head(U_IQ)
+# calcul de la pondération omega_Q pour l'ACP pondérée
+stat_bsa <- function(x, n_I, m_Q) {
+   x_mat = as.matrix(x)
+   col.w = m_Q / sum(m_Q)
+   Ubar_Q <- apply(x_mat, 2, weighted.mean, n_I)
+   varU_Q <- apply(x_mat**2, 2, weighted.mean, n_I) - Ubar_Q**2
+   stdU_Q <- sqrt(varU_Q)
+   h_Q <- Ubar_Q * (1-Ubar_Q)
+   omega_Q <- m_Q/h_Q/sum(m_Q)
+   ctr_Q <- omega_Q * varU_Q
+   ctr_Q <- 100 * ctr_Q / sum(ctr_Q)
+   res = list(Ubar_Q = Ubar_Q, std_Q = stdU_Q, var_Q = varU_Q, h_Q = h_Q,
+              omega_Q = omega_Q, contrib_Q = ctr_Q)
+   return(res)
+}
+stats = stat_bsa(U_IQ, parametres$n_I, parametres$m_Q)
+stats
+```
+
+- AC du tableau dédoublé (individus actifs et supplémentaires)
+
+```{r}
+Isupp = which(example$Annee==2022)
+Isupp
+```
+
+```{r}
+res.ca <- CA(df.acdedouble, row.sup = Isupp, graph = FALSE)
+summary(res.ca)
+```
+
+
+- ACP du tableau U_IQ
+
+```{r}
+res.pca = PCA(U_IQ, scale.unit = FALSE, ind.sup = Isupp, col.w = stats$omega_Q, graph = FALSE)
+summary(res.pca)
 ```
 

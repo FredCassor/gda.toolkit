@@ -50,16 +50,15 @@ average <- function(x, w, ...) {
 #'
 stat_bsa <- function(x, n_I, m_Q) {
    x_mat = as.matrix(x)
+   col.w = m_Q / sum(m_Q)
    Ubar_Q <- apply(x_mat, 2, average, n_I)
    varU_Q <- apply(x_mat**2, 2, average, n_I) - Ubar_Q**2
    stdU_Q <- sqrt(varU_Q)
    h_Q <- Ubar_Q * (1-Ubar_Q)
-   omega_Q <- (m_Q/h_Q) / sum(m_Q)
+   omega_Q <- m_Q/h_Q/sum(m_Q)
    ctr_Q <- omega_Q * varU_Q
    ctr_Q <- 100 * ctr_Q / sum(ctr_Q)
    res = list(Ubar_Q = Ubar_Q, std_Q = stdU_Q, var_Q = varU_Q, h_Q = h_Q,
               omega_Q = omega_Q, contrib_Q = ctr_Q)
    return(res)
 }
-#U_IQ <- scaler_bsa(data.actif, a_Q, b_Q, params = parametres, inverse = TRUE)
-#stat_bsa(U_IQ, parametres$n_I, parametres$m_Q)

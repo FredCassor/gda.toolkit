@@ -39,7 +39,7 @@ head(df)
 \references{
 \itemize{
 \item J.-P. Benzécri (1980). Pratique de l'analyse des données, Paperback Octavo édition. Paris: Dunod
-\item Nakhlé F. (1976). Sur l'analyse d'un tableau de notes dédoublées, Les cahiers de l'analyse des données, 1:243-257, 367-379
-\item Greenacre M. (2014). Data doubling and fuzzy coding, in Blasius, J. and Greenacre, M., Visualization and Verbalization of Data. Chapman & Hall/CRC
+\item Greenacre M. (1984). Theory and applications of correspondence analysis. London: Academic Press
+\item Greenacre M. (2014). Data doubling and fuzzy coding, in Blasius, J. and Greenacre, M., \emph{Visualization and Verbalization of Data}. Chapman & Hall/CRC
 }
 }
